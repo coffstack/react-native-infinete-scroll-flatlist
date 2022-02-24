@@ -1,12 +1,5 @@
 import React from 'react';
-import {
-  useWindowDimensions,
-  ImageBackground,
-  StyleSheet,
-  View,
-  Text,
-} from 'react-native';
-import {colors} from '../theme/colors';
+import {useWindowDimensions, ImageBackground, StyleSheet} from 'react-native';
 
 const cover = require('../assets/header.jpeg');
 const dimensions = {
@@ -16,7 +9,7 @@ const dimensions = {
 
 const ratio = dimensions.height / dimensions.with;
 
-export function FixedHeader({page}: {page?: number}) {
+export function FixedHeader() {
   const window = useWindowDimensions();
 
   const width = window.width;
@@ -26,13 +19,8 @@ export function FixedHeader({page}: {page?: number}) {
     <ImageBackground
       imageStyle={styles.image}
       style={[{width, height}, styles.container]}
-      source={cover}>
-      {page && (
-        <View style={styles.counter}>
-          <Text style={styles.text}>Página Atual: {page}</Text>
-        </View>
-      )}
-    </ImageBackground>
+      source={cover}
+    />
   );
 }
 
@@ -43,19 +31,5 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'flex-end',
     justifyContent: 'flex-end',
-  },
-  counter: {
-    backgroundColor: colors.onBackground,
-    padding: 12,
-    alignSelf: 'center',
-
-    marginBottom: 16,
-  },
-
-  text: {
-    alignSelf: 'center',
-    fontSize: 14,
-    fontWeight: 'bold',
-    color: colors.background,
   },
 });
