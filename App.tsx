@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import {
+  ActivityIndicator,
   FlatList,
   ListRenderItemInfo,
   StyleSheet,
@@ -14,18 +15,31 @@ import {FixedHeader} from './src/components/FixedHeader';
 
 export default function App() {
   const [list, setList] = useState<Episode[]>([]);
+  const [page, setPage] = useState(1);
+  const [hasMoreData, setHasMoreData] = useState(true);
   function renderItem({item}: ListRenderItemInfo<Episode>) {
     return <EpisodeItem {...item} />;
   }
 
   async function getCharacters() {
-    const {data} = await axios.get<Info<Episode[]>>(
-      'https://rickandmortyapi.com/api/episode',
-    );
+    setTimeout(async () => {
+      if (!hasMoreData) return;
 
-    if (data.results) {
-      setList(data.results);
-    }
+      const {data} = await axios.get<Info<Episode[]>>(
+        `https://rickandmortyapi.com/api/episode?page=${page}`,
+      );
+
+      if (data.results) {
+        const current = data.results;
+        setList(prev => [...prev, ...current]);
+
+        if (data.info?.next) {
+          setPage(prev => prev + 1);
+        } else {
+          setHasMoreData(false);
+        }
+      }
+    }, 2000);
   }
 
   useEffect(() => {
@@ -41,9 +55,20 @@ export default function App() {
         contentContainerStyle={{paddingBottom: 20}}
         keyExtractor={item => item.name}
         renderItem={renderItem}
+        onEndReached={getCharacters}
+        onEndReachedThreshold={0.1}
+        ListFooterComponent={<Loading loading={hasMoreData} />}
       />
     </View>
   );
+}
+
+function Loading({loading}: {loading: boolean}) {
+  if (loading) {
+    return <ActivityIndicator size={'large'} color={colors.primary} />;
+  }
+
+  return null;
 }
 
 const styles = StyleSheet.create({
