@@ -22,24 +22,25 @@ export default function App() {
   }
 
   async function getCharacters() {
-    setTimeout(async () => {
-      if (!hasMoreData) return;
+    // remova o comentário do setTimeout para perceber o loading com o delay
+    // setTimeout(async () => {
+    if (!hasMoreData) return;
 
-      const {data} = await axios.get<Info<Episode[]>>(
-        `https://rickandmortyapi.com/api/episode?page=${page}`,
-      );
+    const {data} = await axios.get<Info<Episode[]>>(
+      `https://rickandmortyapi.com/api/episode?page=${page}`,
+    );
 
-      if (data.results) {
-        const current = data.results;
-        setList(prev => [...prev, ...current]);
+    if (data.results) {
+      const current = data.results;
+      setList(prev => [...prev, ...current]);
 
-        if (data.info?.next) {
-          setPage(prev => prev + 1);
-        } else {
-          setHasMoreData(false);
-        }
+      if (data.info?.next) {
+        setPage(prev => prev + 1);
+      } else {
+        setHasMoreData(false);
       }
-    }, 2000);
+    }
+    // }, 2000);
   }
 
   useEffect(() => {
